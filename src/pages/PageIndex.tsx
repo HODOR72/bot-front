@@ -123,9 +123,6 @@ export default function PageIndex() {
             Рассылка сообщений
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-            <Button size="large" variant="contained" sx={{ width: 220 }} onClick={setSelectedAll}>
-              {isSelectedAll ? 'Отменить выбор всех' : 'Выбрать всех'}
-            </Button>
             <FormControl fullWidth sx={{ maxWidth: 320, width: '100%' }}>
               <InputLabel id="search-select-label">Пользователи</InputLabel>
               <Select
@@ -140,6 +137,17 @@ export default function PageIndex() {
                 onChange={(e) => setSelectedOption(e?.target?.value as Option[])}
                 onClose={() => setSearchText('')}
               >
+                <ListSubheader sx={{marginBottom: 2}}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    sx={{ width: '100%' }}
+                    onClick={setSelectedAll}
+                  >
+                    {isSelectedAll ? 'Отменить выбор всех' : 'Выбрать всех'}
+                  </Button>
+                </ListSubheader>
+
                 <ListSubheader>
                   <TextField
                     size="small"

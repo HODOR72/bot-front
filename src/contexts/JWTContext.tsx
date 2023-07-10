@@ -5,6 +5,7 @@ import { isValidToken, setSession, handleTokenExpired } from '../utils/jwt';
 // @types
 import { ActionMap, AuthState, AuthUser, JWTContextType } from '../@types/auth';
 import { ITokens } from '../@types/auth';
+import Cookies from 'js-cookie';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +69,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
   }
 };
 
-const AuthContext = createContext<JWTContextType | null>(null);
+const AuthContext = createContext<JWTContextType | null | any>(null);
 
 // ----------------------------------------------------------------------
 
@@ -79,120 +80,22 @@ type AuthProviderProps = {
 function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
 
-  const setAvatarPath = async (user: AuthUser) => {
-    if (user!.avatar && user !== null) {
-      const response = await axiosBase.get(`api/v1/files/image/user/avatar/${user.avatar}/40/40/7`, {
-        responseType: 'blob',
-      });
-      if (response.data) {
-        user.avatarPath = URL.createObjectURL(response.data);
-      }
-      return user;
-    } else return user;
-  };
-
-  useEffect(() => {
-    initialize();
-  }, []);
-
-  const initialize = async () => {
-    try {
-      const tokens = localStorage.getItem('tokens');
-      if (tokens) {
-        let validTokens = JSON.parse(tokens);
-        if (!isValidToken(validTokens.access_token)) {
-          const response = await axiosBase.post('api/v1/auth/refresh', {
-            refresh_token: validTokens.refresh_token,
-          });
-          validTokens = {
-            access_token: response.data.access_token,
-            refresh_token: response.data.refresh_token,
-          };
-        }
-        setSession(validTokens);
-        const response = await axiosBase.get('api/v1/auth/me');
-        const user = response.data.data;
-        const newUser = await setAvatarPath(user);
-        dispatch({
-          type: Types.Initial,
-          payload: {
-            isAuthenticated: true,
-            user: newUser,
-          },
-        });
-      }
-      else {
-        dispatch({
-          type: Types.Initial,
-          payload: {
-            isAuthenticated: false,
-            user: null,
-          },
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      handleTokenExpired(1);
-      dispatch({
-        type: Types.Initial,
-        payload: {
-          isAuthenticated: false,
-          user: null,
-        },
-      });
-    }
-  };
-
   const login = async (email: string, password: string) => {
-    const response = await axiosBase.post('api/v1/auth/login', {
+    console.log(email, password);
+    const response = await axiosBase.post('/login', {
       email,
       password,
     });
 
-    const responseTokens: ITokens = {
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    };
+    console.log(response);
+    Cookies.set('logged', 'True');
 
-    setSession(responseTokens);
     dispatch({ type: Types.Login });
-    await initialize();
-  };
-
-  const register = async (name: string, email: string, password: string) => {
-    const response = await axiosBase.post('api/v1/auth/register', {
-      name,
-      email,
-      password,
-    });
-
-    const responseTokens: ITokens = {
-      access_token: response.data.access_token,
-      refresh_token: response.data.refresh_token,
-    };
-
-    setSession(responseTokens);
-
-    dispatch({ type: Types.Register });
-    await initialize();
   };
 
   const logout = async () => {
     setSession(null);
     dispatch({ type: Types.Logout });
-  };
-
-  const update = async (params: any) => {
-    const response = await axiosBase.put('api/v1/auth/me', params);
-    const user = response.data.data;
-    const newUser = await setAvatarPath(user);
-    dispatch({
-      type: Types.Initial,
-      payload: {
-        isAuthenticated: true,
-        user: newUser,
-      },
-    });
   };
 
   return (
@@ -202,8 +105,6 @@ function AuthProvider({ children }: AuthProviderProps) {
         method: 'jwt',
         login,
         logout,
-        register,
-        update,
       }}
     >
       {children}

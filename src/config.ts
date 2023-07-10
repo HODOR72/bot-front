@@ -5,7 +5,7 @@ import { SettingsValueProps } from './components/settings/type';
 // ----------------------------------------------------------------------
 
 // local
-export const HOST_API = 'http://localhost/laravel-skeleton/public/';
+export const HOST_API = 'https://c9f0-176-40-245-92.ngrok-free.app/';
 
 // LAYOUT
 // ----------------------------------------------------------------------

@@ -10,17 +10,16 @@ export default function PageErrors() {
 
   return (
     <>
-      <Page title="Сведения об ошибках">
+      <Page title="История запросов">
         <Container maxWidth={themeStretch ? false : 'xl'}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Typography variant="h3" component="h1" paragraph>
-              Сведения об ошибках
+              История запросов
             </Typography>
             <Button size="large" variant="contained">
               Загрузить
             </Button>
           </Box>
-          
         </Container>
       </Page>
     </>

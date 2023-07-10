@@ -2,6 +2,8 @@ import { combineReducers } from 'redux';
 import storage from 'redux-persist/lib/storage';
 // slices
 import userReducer from './slices/user';
+import messagesReducer from './slices/messages';
+import actionsReducer from './slices/actions';
 
 // ----------------------------------------------------------------------
 
@@ -13,7 +15,9 @@ const rootPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  user: userReducer
+  user: userReducer,
+  messages: messagesReducer,
+  actions: actionsReducer
 });
 
 export { rootPersistConfig, rootReducer };

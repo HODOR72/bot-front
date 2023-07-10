@@ -21,7 +21,7 @@ const navConfig = [
     subheader: 'Администрирование',
     items: [
       { title: 'Рассылка', path: PATH_DASHBOARD.index, icon: ICONS.dashboard },
-      { title: 'Сведения об ошибках', path: PATH_DASHBOARD.errors, icon: ICONS.items},
+      { title: 'История запросов', path: PATH_DASHBOARD.errors, icon: ICONS.items},
     ],
   },
   // {

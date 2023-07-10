@@ -16,7 +16,8 @@ export function getUserListThunk(params: UserListParams) {
   return async () => {
     dispatch(startLoading());
     try {
-      const response: { data: UserList } = await axiosBase.get('api/v1/users', { params });
+      const response: { data: UserList } = await axiosBase.get('getUsers', { params });
+      console.log(response.data)
       dispatch(getUserListSuccess(response.data));
     } catch (error) {
       dispatch(hasError(error));

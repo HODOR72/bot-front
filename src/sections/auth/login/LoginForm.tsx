@@ -24,6 +24,7 @@ type FormValuesProps = {
 
 export default function LoginForm() {
   const { login } = useAuth();
+  console.log(login);
 
   const isMountedRef = useIsMountedRef();
 

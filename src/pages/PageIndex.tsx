@@ -18,9 +18,14 @@ import {
 import useSettings from '../hooks/useSettings';
 // components
 import Page from '../components/Page';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Iconify from 'src/components/Iconify';
 import { useSnackbar } from 'notistack';
+import { useSelector } from 'react-redux';
+import { RootState, dispatch } from 'src/redux/store';
+import { getUserListThunk } from 'src/redux/thunks/user';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 type Option = string;
 
@@ -51,11 +56,33 @@ const allOptions: Option[] = [
 export default function PageIndex() {
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
+  // Cookies.set('logged', 'True');
 
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<Option[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageText, setMessageText] = useState<string>('');
+
+  const { userList, userListParams } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    dispatch(getUserListThunk(userListParams));
+  }, [dispatch, userListParams]);
+
+  console.log(userList);
+  // useEffect(() => {
+  //   const send = async () => {
+  //     try {
+  //       const response = await fetch('https://c9f0-176-40-245-92.ngrok-free.app/getUsers');
+  //       const data = await response.json();
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error('Произошла ошибка:', error);
+  //     }
+  //   };
+
+  //   send();
+  // }, []);
 
   const displayedOptions = useMemo(
     () => allOptions.filter((option) => containsText(option, searchText)),
@@ -137,7 +164,7 @@ export default function PageIndex() {
                 onChange={(e) => setSelectedOption(e?.target?.value as Option[])}
                 onClose={() => setSearchText('')}
               >
-                <ListSubheader sx={{marginBottom: 2}}>
+                <ListSubheader sx={{ marginBottom: 2 }}>
                   <Button
                     size="large"
                     variant="contained"

@@ -63,26 +63,26 @@ export default function PageIndex() {
   const [searchText, setSearchText] = useState<string>('');
   const [messageText, setMessageText] = useState<string>('');
 
-  const { userList, userListParams } = useSelector((state: RootState) => state.user);
+  // const { userList, userListParams } = useSelector((state: RootState) => state.user);
 
-  useEffect(() => {
-    dispatch(getUserListThunk(userListParams));
-  }, [dispatch, userListParams]);
-
-  console.log(userList);
   // useEffect(() => {
-  //   const send = async () => {
-  //     try {
-  //       const response = await fetch('https://c9f0-176-40-245-92.ngrok-free.app/getUsers');
-  //       const data = await response.json();
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.error('Произошла ошибка:', error);
-  //     }
-  //   };
+  //   dispatch(getUserListThunk(userListParams));
+  // }, [dispatch, userListParams]);
 
-  //   send();
-  // }, []);
+  // console.log(userList);
+  useEffect(() => {
+    const send = async () => {
+      try {
+        const response = await fetch('https://c9f0-176-40-245-92.ngrok-free.app/getUsers');
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Произошла ошибка:', error);
+      }
+    };
+
+    send();
+  }, []);
 
   const displayedOptions = useMemo(
     () => allOptions.filter((option) => containsText(option, searchText)),

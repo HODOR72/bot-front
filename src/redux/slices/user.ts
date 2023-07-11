@@ -29,7 +29,7 @@ const slice = createSlice({
       state.userList = action.payload;
     },
 
-    setUserListParams(state, action){
+    setUserListParams(state, action) {
       state.userListParams = action.payload;
     },
 
@@ -37,27 +37,6 @@ const slice = createSlice({
       state.isLoading = false;
       state.user = action.payload;
     },
-
-    addUserSuccess(state, action) {
-      state.userList = {
-        meta: state.userList.meta,
-        data: [action.payload, ...state.userList.data || []]
-      }
-    },
-
-    editUserSuccess(state, action) {
-      state.userList = {
-        meta: state.userList.meta,
-        data: state.userList.data?.map(obj => obj.id === action.payload.id ? action.payload : obj)
-      }
-    },
-
-    deleteUserSuccess(state, action) {
-      state.userList = {
-        meta: state.userList.meta,
-        data: state.userList.data?.filter(obj => obj.id !== action.payload.id)
-      }
-    }
   },
 });
 
@@ -66,7 +45,10 @@ export default slice.reducer;
 
 // Actions
 export const {
-  startLoading, hasError, resetError, getUserListSuccess, setUserListParams,
-  getUserSuccess, addUserSuccess, editUserSuccess, deleteUserSuccess
+  startLoading,
+  hasError,
+  resetError,
+  getUserListSuccess,
+  setUserListParams,
+  getUserSuccess,
 } = slice.actions;
-

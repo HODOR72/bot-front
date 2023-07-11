@@ -4,39 +4,43 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Stack, Alert, IconButton, InputAdornment } from '@mui/material';
+import { Stack, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
 import useAuth from '../../../hooks/useAuth';
-import useIsMountedRef from '../../../hooks/useIsMountedRef';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
+import ApiClients from 'src/utils/axios';
+import { dispatch } from 'src/redux/store';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router';
+import { PATH_DASHBOARD } from 'src/routes/paths';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
-  email: string;
+  login: string;
   password: string;
   remember: boolean;
   afterSubmit?: string;
 };
 
+const { axiosBase } = ApiClients;
+
 export default function LoginForm() {
-  const { login } = useAuth();
-  console.log(login);
-
-  const isMountedRef = useIsMountedRef();
-
+  const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Некорректный email').required('Введите email'),
+    login: Yup.string().email('Некорректный email').required('Введите email'),
     password: Yup.string().required('Введите пароль'),
   });
 
   const defaultValues = {
-    email: '',
+    login: '',
     password: '',
     remember: true,
   };
@@ -45,33 +49,29 @@ export default function LoginForm() {
     resolver: yupResolver(LoginSchema),
     defaultValues,
   });
+  const login = async () => {
+    const { login, password } = methods.getValues();
 
-  const {
-    reset,
-    setError,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = methods;
-
-  const onSubmit = async (data: FormValuesProps) => {
     try {
-      await login(data.email, data.password);
+      const response = await axiosBase.post('/login', {
+        login,
+        password,
+      });
+
+      console.log(response);
+      Cookies.set('logged', 'True');
+
+      dispatch({ type: 'LOGIN' });
+
+      navigate(PATH_DASHBOARD.index);
     } catch (error) {
+      enqueueSnackbar('Неправильный логин или пароль', { variant: 'error' });
       console.error(error);
-
-      reset();
-
-      if (isMountedRef.current) {
-        setError('afterSubmit', { ...error, message: error.message });
-      }
     }
   };
-
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods}>
       <Stack spacing={3}>
-        {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
-
         <RHFTextField name="login" label="Логин" />
 
         <RHFTextField
@@ -97,13 +97,7 @@ export default function LoginForm() {
         </Link>*/}
       </Stack>
 
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        loading={isSubmitting}
-      >
+      <LoadingButton fullWidth size="large" variant="contained" onClick={() => login()}>
         Вход
       </LoadingButton>
     </FormProvider>

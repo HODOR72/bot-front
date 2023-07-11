@@ -80,14 +80,16 @@ type AuthProviderProps = {
 function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
 
-  const login = async (email: string, password: string) => {
-    console.log(email, password);
+  const login = async (login: string, password: string) => {
+    console.log(login, password);
+
     const response = await axiosBase.post('/login', {
-      email,
+      login,
       password,
     });
 
-    console.log(response);
+    console.log(response)
+
     Cookies.set('logged', 'True');
 
     dispatch({ type: Types.Login });

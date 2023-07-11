@@ -15,7 +15,7 @@ export const PATH_AUTH = {
   resetPassword: path(ROOTS_AUTH, '/reset-password'),
 };
 
-export const PATH_DASHBOARD = {
+export const PATH_DASHBOARD: any = {
   root: ROOTS_DASHBOARD,
   index: path(ROOTS_DASHBOARD, '/index'),
   errors: path(ROOTS_DASHBOARD, '/errors'),

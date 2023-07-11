@@ -19,21 +19,8 @@ const ICONS = {
 const navConfig = [
   {
     subheader: 'Администрирование',
-    items: [
-      { title: 'Рассылка', path: PATH_DASHBOARD.index, icon: ICONS.dashboard },
-      { title: 'История запросов', path: PATH_DASHBOARD.errors, icon: ICONS.items},
-    ],
+    items: [{ title: 'Общее', path: PATH_DASHBOARD.index, icon: ICONS.dashboard }],
   },
-  // {
-  //   subheader: 'Администрирование',
-  //   items: [
-  //     {
-  //       title: 'Пользователи',
-  //       path: PATH_DASHBOARD.users.root,
-  //       icon: ICONS.user,
-  //     },
-  //   ],
-  // },
 ];
 
 export default navConfig;

@@ -24,81 +24,60 @@ import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 import { RootState, dispatch } from 'src/redux/store';
 import { getUserListThunk } from 'src/redux/thunks/user';
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import { User } from 'src/@types/user';
+import { createMessagesThunk } from 'src/redux/thunks/messages';
+import { getActionsListThunk } from 'src/redux/thunks/actions';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 
-type Option = string;
+type Option = User;
 
 const containsText = (text: string, searchText: string) =>
   text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
 
-const allOptions: Option[] = [
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option One2',
-  'Option Two',
-  'Option Three',
-  'Option Four',
-  'Option One',
-  'Option Two',
-  'Option One3',
-  'Option Three',
-  'Option Four',
-];
-
 export default function PageIndex() {
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
-  // Cookies.set('logged', 'True');
 
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<Option[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [messageText, setMessageText] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
 
-  // const { userList, userListParams } = useSelector((state: RootState) => state.user);
-
-  // useEffect(() => {
-  //   dispatch(getUserListThunk(userListParams));
-  // }, [dispatch, userListParams]);
-
-  // console.log(userList);
-  useEffect(() => {
-    const send = async () => {
-      try {
-        const response = await fetch('https://c9f0-176-40-245-92.ngrok-free.app/getUsers');
-        const data = await response.json();
-        console.log(data);
-      } catch (error) {
-        console.error('Произошла ошибка:', error);
-      }
-    };
-
-    send();
-  }, []);
+  const { userList, userListParams } = useSelector((state: RootState) => state.user);
 
   const displayedOptions = useMemo(
-    () => allOptions.filter((option) => containsText(option, searchText)),
-    [searchText]
+    () =>
+      userList &&
+      userList.length &&
+      userList.filter((user: User) => containsText(user.name, searchText)),
+    [searchText, userList]
   );
+
+  useEffect(() => {
+    dispatch(getUserListThunk(userListParams));
+  }, [dispatch, userListParams]);
+
+  const { actionsList, actionsListParams } = useSelector((state: RootState) => state.actions);
+
+  useEffect(() => {
+    dispatch(getActionsListThunk(actionsListParams));
+  }, [dispatch, actionsListParams]);
+
+  if (!userList || !userList.length || !actionsList.length) {
+    return null;
+  }
 
   const setSelectedAll = () => {
     setIsSelectedAll(!isSelectedAll);
     if (!isSelectedAll) {
-      setSelectedOption(allOptions);
+      setSelectedOption(userList.map((user: User) => user.nickname));
     } else {
       setSelectedOption([]);
     }
   };
 
-  const [page, setPage] = useState<number>(1);
   const itemsPerPage: number = 8;
   const totalPages: number = Math.ceil(displayedOptions.length / itemsPerPage);
   const startIndex: number = (page - 1) * itemsPerPage;
@@ -128,18 +107,96 @@ export default function PageIndex() {
     setPage(value);
   };
 
-  const handleSend = () => {
-    if (selectedOption?.length == 0) {
+  const handleSend = async () => {
+    if (selectedOption.length === 0) {
       return enqueueSnackbar('Не выбран список пользователей', { variant: 'error' });
     }
-    if (messageText.trim() == '') {
+    if (messageText.trim() === '') {
       return enqueueSnackbar('Не указано сообщение', { variant: 'error' });
     }
-    console.log('Selected Options:', selectedOption);
-    console.log('Message Text:', messageText);
+
+    const selectedUserIds = selectedOption.map((selectedNickname) => {
+      const selectedUser = userList.find((user: User) => user.nickname === selectedNickname);
+      return selectedUser ? selectedUser.userId : null;
+    });
+
+    const filteredUserIds = selectedUserIds.filter((userId) => userId !== null);
 
     setSelectedOption([]);
     setMessageText('');
+    await dispatch(
+      createMessagesThunk({
+        users: filteredUserIds,
+        message: messageText,
+      })
+    );
+    return enqueueSnackbar('Сообщение успешно отправлено', { variant: 'success' });
+  };
+
+  const convertArrayToWorkbook = (data: any) => {
+    // Создаем новую книгу
+    const workbook = XLSX.utils.book_new();
+
+    // Преобразуем массив в формат данных, понятный для библиотеки XLSX
+    const worksheetData = [
+      ['Дата', 'ID', 'Заказ', 'Телефон', 'ID Пользователя'], // Названия колонок
+      ...data.map((item: any) => [
+        formatDate(item.date), // Форматируем дату в нормальный вид
+        item.id,
+        item.order,
+        item.phone,
+        item.userId,
+      ]),
+    ];
+
+    // Создаем новый лист с данными
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // Добавляем лист в книгу
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1');
+
+    return workbook;
+  };
+
+  const convertArrayToWorkbookUsers = (data: any) => {
+    // Создаем новую книгу
+    const workbook = XLSX.utils.book_new();
+    console.log(data);
+
+    // Преобразуем массив в формат данных, понятный для библиотеки XLSX
+    const worksheetData = [
+      ['Имя', 'Фамилия', 'Никнейм', 'Телефон', 'ID Пользователя'], // Названия колонок
+      ...data.map((item: any) => [item.name, item.surname, item.nickname, item.phone, item.userId]),
+    ];
+
+    // Создаем новый лист с данными
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // Добавляем лист в книгу
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1');
+
+    return workbook;
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const options: any = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
+  const handleExportExcel = (list: any, handleFunc: any) => {
+    const workbook = handleFunc(list);
+
+    // Преобразуем книгу в бинарные данные
+    const excelBuffer = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' });
+
+    // Создаем Blob для сохранения файла
+    const excelBlob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    // Сохраняем файл
+    saveAs(excelBlob, 'data.xlsx');
   };
 
   return (
@@ -149,7 +206,7 @@ export default function PageIndex() {
           <Typography variant="h3" component="h1" paragraph>
             Рассылка сообщений
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 4 }}>
             <FormControl fullWidth sx={{ maxWidth: 320, width: '100%' }}>
               <InputLabel id="search-select-label">Пользователи</InputLabel>
               <Select
@@ -160,8 +217,8 @@ export default function PageIndex() {
                 label="Пользователи"
                 multiple
                 input={<OutlinedInput label="Пользователи" />}
-                renderValue={(selected) => (selected as Option[]).join(', ')}
-                onChange={(e) => setSelectedOption(e?.target?.value as Option[])}
+                renderValue={(selected) => (selected as any).join(', ')}
+                onChange={(e) => setSelectedOption(e?.target?.value as any)}
                 onClose={() => setSearchText('')}
               >
                 <ListSubheader sx={{ marginBottom: 2 }}>
@@ -200,8 +257,8 @@ export default function PageIndex() {
                   />
                 </ListSubheader>
                 {paginatedOptions.map((option: Option, i: number) => (
-                  <MenuItem key={i} value={option}>
-                    {option}
+                  <MenuItem key={i} value={option.nickname}>
+                    {option.nickname}
                   </MenuItem>
                 ))}
                 <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center' }}>
@@ -221,10 +278,35 @@ export default function PageIndex() {
               label="Введите сообщение"
               variant="outlined"
               sx={{ maxWidth: 320, width: '100%' }}
+              value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
             />
             <Button size="large" variant="contained" onClick={handleSend}>
               Отправить
+            </Button>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
+            <Typography variant="h3" component="h1" paragraph>
+              История запросов
+            </Typography>
+            <Button
+              size="large"
+              variant="contained"
+              onClick={() => handleExportExcel(actionsList, convertArrayToWorkbook)}
+            >
+              Загрузить
+            </Button>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
+            <Typography variant="h3" component="h1" paragraph>
+              Пользователи
+            </Typography>
+            <Button
+              size="large"
+              variant="contained"
+              onClick={() => handleExportExcel(userList, convertArrayToWorkbookUsers)}
+            >
+              Загрузить
             </Button>
           </Box>
         </Container>

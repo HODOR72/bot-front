@@ -79,11 +79,10 @@ export default function NavbarVertical({ isOpenSidebar, onCloseSidebar }: Props)
           )}
         </Stack>
 
-        <NavbarAccount isCollapse={isCollapse} />
+        {/* <NavbarAccount isCollapse={isCollapse} /> */}
       </Stack>
 
       <NavSectionVertical navConfig={navConfig} isCollapse={isCollapse} />
-
     </Scrollbar>
   );
 

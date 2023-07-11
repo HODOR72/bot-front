@@ -29,7 +29,7 @@ const slice = createSlice({
       state.actionsList = action.payload;
     },
 
-    setActionsListParams(state, action){
+    setActionsListParams(state, action) {
       state.actionsListParams = action.payload;
     },
 
@@ -41,23 +41,9 @@ const slice = createSlice({
     addActionsSuccess(state, action) {
       state.actionsList = {
         meta: state.actionsList.meta,
-        data: [action.payload, ...state.actionsList.data || []]
-      }
+        data: [action.payload, ...(state.actionsList.data || [])],
+      };
     },
-
-    editActionsSuccess(state, action) {
-      state.actionsList = {
-        meta: state.actionsList.meta,
-        data: state.actionsList.data?.map(obj => obj.id === action.payload.id ? action.payload : obj)
-      }
-    },
-
-    deleteActionsSuccess(state, action) {
-      state.actionsList = {
-        meta: state.actionsList.meta,
-        data: state.actionsList.data?.filter(obj => obj.id !== action.payload.id)
-      }
-    }
   },
 });
 
@@ -66,7 +52,11 @@ export default slice.reducer;
 
 // Actions
 export const {
-  startLoading, hasError, resetError, getActionsListSuccess, setActionsListParams,
-  getActionsSuccess, addActionsSuccess, editActionsSuccess, deleteActionsSuccess
+  startLoading,
+  hasError,
+  resetError,
+  getActionsListSuccess,
+  setActionsListParams,
+  getActionsSuccess,
+  addActionsSuccess,
 } = slice.actions;
-

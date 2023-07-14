@@ -81,8 +81,6 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
 
   const login = async (login: string, password: string) => {
-    console.log(login, password);
-
     await axiosBase.get(`/login?login=${login}&password=${password}`);
 
     Cookies.set('logged', 'True');

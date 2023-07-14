@@ -51,7 +51,7 @@ export default function LoginForm() {
   });
   const login = async () => {
     const { login, password } = methods.getValues();
-
+    console.log(login, password)
     try {
       const response = await axiosBase.get(`/login?login=${login}&password=${password}`);
 

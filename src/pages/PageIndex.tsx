@@ -20,17 +20,13 @@ export default function PageIndex() {
   const { userList, userListParams } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    if (userListParams) {
-      dispatch(getUserListThunk(userListParams));
-    }
+    dispatch(getUserListThunk(userListParams));
   }, [dispatch, userListParams]);
 
   const { actionsList, actionsListParams } = useSelector((state: RootState) => state.actions);
 
   useEffect(() => {
-    if (actionsListParams) {
-      dispatch(getActionsListThunk(actionsListParams));
-    }
+    dispatch(getActionsListThunk(actionsListParams));
   }, [dispatch, actionsListParams]);
 
   return (

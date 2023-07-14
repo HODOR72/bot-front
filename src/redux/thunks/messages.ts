@@ -6,11 +6,10 @@ import { hasError, addMessagesSuccess } from '../slices/messages';
 const { axiosBase } = ApiClients;
 
 export function createMessagesThunk(params: any) {
-  console.log(params);
   return async () => {
     try {
       const response: { data: MessagesList } = await axiosBase.get(
-        `sendMessages?users=${params.users}&message=${params.message}`
+        `sendMessages?users=${params.users.join(',')}&message=${params.message}`
       );
 
       dispatch(addMessagesSuccess(response.data.data));

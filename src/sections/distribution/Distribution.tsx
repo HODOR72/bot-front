@@ -11,6 +11,7 @@ import {
   MenuItem,
   Pagination,
   Box,
+  TextareaAutosize,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useState, useMemo } from 'react';
@@ -48,6 +49,12 @@ const Distribution = ({ userList }: IDistribution) => {
       setSelectedOption(userList.map((user: User) => user.nickname));
     } else {
       setSelectedOption([]);
+    }
+  };
+
+  const handleSetMessage = (val: any) => {
+    if (String(val)?.length <= 4095) {
+      setMessageText(val);
     }
   };
 
@@ -177,14 +184,20 @@ const Distribution = ({ userList }: IDistribution) => {
             </Box>
           </Select>
         </FormControl>
-        <TextField
+        <TextareaAutosize
           id="outlined-basic"
-          label="Введите сообщение"
-          variant="outlined"
-          sx={{ maxWidth: 320, width: '100%' }}
+          placeholder="Введите сообщение"
+          minRows={3} // Можно настроить минимальное количество строк
+          maxRows={10} // Можно настроить максимальное количество строк
           value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
+          onChange={(e) => handleSetMessage(e.target.value)}
+          style={{ maxWidth: 320, width: '100%' }}
+          // @ts-ignore
+          inputProps={{
+            maxLength: 4096,
+          }}
         />
+        ;
         <Button size="large" variant="contained" onClick={handleSend}>
           Отправить
         </Button>

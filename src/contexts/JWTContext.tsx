@@ -83,12 +83,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const login = async (login: string, password: string) => {
     console.log(login, password);
 
-    const response = await axiosBase.post('/login', {
-      login,
-      password,
-    });
-
-    console.log(response)
+    const response = await axiosBase.get(`/login?login=${login}&password=${password}`);
 
     Cookies.set('logged', 'True');
 

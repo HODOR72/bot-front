@@ -6,10 +6,9 @@ import { hasError, addMessagesSuccess } from '../slices/messages';
 const { axiosBase } = ApiClients;
 
 export function createMessagesThunk(params: any) {
-  console.log(params);
   return async () => {
     try {
-      const response: { data: { data: MessagesManager } } = await axiosBase.post(
+      const response: { data: { data: MessagesManager } } = await axiosBase.get(
         `sendMessages`,
         params
       );

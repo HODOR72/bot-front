@@ -36,7 +36,6 @@ const Distribution = ({ userList }: IDistribution) => {
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>('');
-  // const [messageText, setMessageText] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const textAreaRef = useRef<any>(null);
 
@@ -123,7 +122,12 @@ const Distribution = ({ userList }: IDistribution) => {
     line-height: 1.5;
     padding: 12px;
     border-radius: 12px 12px 0 12px;
-    border: 1px solid #d0d7de;
+    border: 1px solid ${theme.palette.mode === 'dark' ? 'rgba(145, 158, 171, 0.32)' : '#d0d7de'};
+    color: ${theme.palette.mode === 'dark' ? 'rgb(133, 133, 133)' : '#000'};
+    background: ${theme.palette.mode === 'dark' ? '#161C24' : '#fff'};
+     &:focus-visible {
+      outline: 0;
+    }
   `
   );
 

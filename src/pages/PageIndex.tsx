@@ -26,11 +26,11 @@ export default function PageIndex() {
     dispatch(getUserListThunk(userListParams)).then(() => {
       setUserListLoaded(true);
     });
-  }, [dispatch, userListParams, actionsListParams]);
+  }, [dispatch, userListParams]);
 
   useEffect(() => {
     dispatch(getActionsListThunk(actionsListParams));
-  }, [dispatch, actionsListParams, userListParams]);
+  }, [dispatch, actionsListParams]);
 
   useEffect(() => {
     console.log('update data', userList, actionsList);

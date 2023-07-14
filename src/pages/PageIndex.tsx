@@ -29,6 +29,10 @@ export default function PageIndex() {
     dispatch(getActionsListThunk(actionsListParams));
   }, [dispatch, actionsListParams]);
 
+  useEffect(() => {
+    console.log('update data', userList, actionsList);
+  }, [userList, actionsList]);
+
   return (
     <>
       <Page title="Главная">

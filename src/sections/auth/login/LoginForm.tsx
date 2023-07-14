@@ -53,10 +53,7 @@ export default function LoginForm() {
     const { login, password } = methods.getValues();
 
     try {
-      const response = await axiosBase.post('/login', {
-        login,
-        password,
-      });
+      const response = await axiosBase.get(`/login?login=${login}&password=${password}`);
 
       console.log(response);
       Cookies.set('logged', 'True');

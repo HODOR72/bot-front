@@ -4,7 +4,7 @@ import { Container } from '@mui/material';
 import useSettings from '../hooks/useSettings';
 // components
 import Page from '../components/Page';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 import { RootState, dispatch } from 'src/redux/store';
@@ -16,18 +16,21 @@ import { getActionsListThunk } from 'src/redux/thunks/actions';
 
 export default function PageIndex() {
   const { themeStretch } = useSettings();
+  const [userListLoaded, setUserListLoaded] = useState(false);
 
   const { userList, userListParams } = useSelector((state: RootState) => state.user);
-
-  useEffect(() => {
-    dispatch(getUserListThunk(userListParams));
-  }, [dispatch, userListParams]);
 
   const { actionsList, actionsListParams } = useSelector((state: RootState) => state.actions);
 
   useEffect(() => {
+    dispatch(getUserListThunk(userListParams)).then(() => {
+      setUserListLoaded(true);
+    });
+  }, [dispatch, userListParams, actionsListParams]);
+
+  useEffect(() => {
     dispatch(getActionsListThunk(actionsListParams));
-  }, [dispatch, actionsListParams]);
+  }, [dispatch, actionsListParams, userListParams]);
 
   useEffect(() => {
     console.log('update data', userList, actionsList);
@@ -37,8 +40,12 @@ export default function PageIndex() {
     <>
       <Page title="Главная">
         <Container maxWidth={themeStretch ? false : 'xl'}>
-          <Distribution userList={userList || []} />
-          <UsersList userList={userList || []} />
+          {userListLoaded && (
+            <>
+              <Distribution userList={userList || []} />
+              <UsersList userList={userList || []} />
+            </>
+          )}
           <History actionsList={actionsList || []} />
         </Container>
       </Page>

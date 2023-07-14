@@ -192,12 +192,8 @@ const Distribution = ({ userList }: IDistribution) => {
           value={messageText}
           onChange={(e) => handleSetMessage(e.target.value)}
           style={{ maxWidth: 320, width: '100%' }}
-          // @ts-ignore
-          inputProps={{
-            maxLength: 4096,
-          }}
         />
-        ;
+
         <Button size="large" variant="contained" onClick={handleSend}>
           Отправить
         </Button>

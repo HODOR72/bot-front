@@ -5,7 +5,7 @@ import { SettingsValueProps } from './components/settings/type';
 // ----------------------------------------------------------------------
 
 // local
-export const HOST_API = 'http://127.0.0.1:8000/';
+export const HOST_API = 'http://176.99.11.226:8000/';
 
 // LAYOUT
 // ----------------------------------------------------------------------

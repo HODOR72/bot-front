@@ -37,9 +37,9 @@ export default function PageIndex() {
     <>
       <Page title="Главная">
         <Container maxWidth={themeStretch ? false : 'xl'}>
-          {userList && userList.length > 0 && <Distribution userList={userList} />}
-          {userList && userList.length > 0 && <UsersList userList={userList} />}
-          {actionsList && actionsList.length > 0 && <History actionsList={actionsList} />}
+          <Distribution userList={userList || []} />
+          <UsersList userList={userList || []} />
+          <History actionsList={actionsList || []} />
         </Container>
       </Page>
     </>

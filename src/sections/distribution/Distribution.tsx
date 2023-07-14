@@ -12,6 +12,7 @@ import {
   Pagination,
   Box,
   TextareaAutosize,
+  styled,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useState, useMemo } from 'react';
@@ -39,8 +40,11 @@ const Distribution = ({ userList }: IDistribution) => {
   const [page, setPage] = useState<number>(1);
 
   const displayedOptions = useMemo(
-    () => userList.filter((user: User) => containsText(user.nickname, searchText)),
-    [searchText]
+    () =>
+      (Array.isArray(userList) ? userList : []).filter((user: User) =>
+        containsText(user.nickname, searchText)
+      ),
+    [userList, searchText]
   );
 
   const setSelectedAll = () => {
@@ -112,12 +116,30 @@ const Distribution = ({ userList }: IDistribution) => {
     );
     return enqueueSnackbar('Сообщение успешно отправлено', { variant: 'success' });
   };
+
+  const StyledTextarea = styled(TextareaAutosize)(
+    ({ theme }) => `
+    width: 320px;
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+    border-radius: 12px 12px 0 12px;
+    border: 1px solid #d0d7de;
+  
+    &:focus-visible {
+      outline: 0;
+    }
+  `
+  );
+
   return (
     <>
       <Typography variant="h3" component="h1" paragraph>
         Рассылка сообщений
       </Typography>
-      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 4 }}>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 4 }}>
         <FormControl fullWidth sx={{ maxWidth: 320, width: '100%' }}>
           <InputLabel id="search-select-label">Пользователи</InputLabel>
           <Select
@@ -131,6 +153,7 @@ const Distribution = ({ userList }: IDistribution) => {
             renderValue={(selected) => selected.join(', ')}
             onChange={(e) => setSelectedOption(e?.target?.value as string[])}
             onClose={() => setSearchText('')}
+            sx={{padding: 0.72}}
           >
             <ListSubheader sx={{ marginBottom: 2 }}>
               <Button
@@ -184,10 +207,10 @@ const Distribution = ({ userList }: IDistribution) => {
             </Box>
           </Select>
         </FormControl>
-        <TextareaAutosize
+        <StyledTextarea
           id="outlined-basic"
           placeholder="Введите сообщение"
-          minRows={3} // Можно настроить минимальное количество строк
+          minRows={2} // Можно настроить минимальное количество строк
           maxRows={10} // Можно настроить максимальное количество строк
           value={messageText}
           onChange={(e) => handleSetMessage(e.target.value)}

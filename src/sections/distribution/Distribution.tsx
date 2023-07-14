@@ -1,3 +1,4 @@
+import React, { useState, useMemo, useRef } from 'react';
 import {
   Typography,
   FormControl,
@@ -15,7 +16,6 @@ import {
   styled,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useState, useMemo } from 'react';
 import { User } from 'src/@types/user';
 import Iconify from 'src/components/Iconify';
 import { dispatch } from 'src/redux/store';
@@ -36,8 +36,9 @@ const Distribution = ({ userList }: IDistribution) => {
   const [isSelectedAll, setIsSelectedAll] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>('');
-  const [messageText, setMessageText] = useState<string>('');
+  // const [messageText, setMessageText] = useState<string>('');
   const [page, setPage] = useState<number>(1);
+  const textAreaRef = useRef<any>(null);
 
   const displayedOptions = useMemo(
     () =>
@@ -53,12 +54,6 @@ const Distribution = ({ userList }: IDistribution) => {
       setSelectedOption(userList.map((user: User) => user.nickname));
     } else {
       setSelectedOption([]);
-    }
-  };
-
-  const handleSetMessage = (val: any) => {
-    if (String(val)?.length <= 4095) {
-      setMessageText(val);
     }
   };
 
@@ -92,6 +87,7 @@ const Distribution = ({ userList }: IDistribution) => {
   };
 
   const handleSend = async () => {
+    let messageText = textAreaRef.current.value;
     if (selectedOption.length === 0) {
       return enqueueSnackbar('Не выбран список пользователей', { variant: 'error' });
     }
@@ -107,13 +103,14 @@ const Distribution = ({ userList }: IDistribution) => {
     const filteredUserIds = selectedUserIds.filter((userId) => userId !== null);
 
     setSelectedOption([]);
-    setMessageText('');
+
     await dispatch(
       createMessagesThunk({
         users: filteredUserIds,
         message: messageText,
       })
     );
+    messageText = '';
     return enqueueSnackbar('Сообщение успешно отправлено', { variant: 'success' });
   };
 
@@ -127,10 +124,6 @@ const Distribution = ({ userList }: IDistribution) => {
     padding: 12px;
     border-radius: 12px 12px 0 12px;
     border: 1px solid #d0d7de;
-  
-    &:focus-visible {
-      outline: 0;
-    }
   `
   );
 
@@ -153,7 +146,7 @@ const Distribution = ({ userList }: IDistribution) => {
             renderValue={(selected) => selected.join(', ')}
             onChange={(e) => setSelectedOption(e?.target?.value as string[])}
             onClose={() => setSearchText('')}
-            sx={{padding: 0.72}}
+            sx={{ padding: 0.72 }}
           >
             <ListSubheader sx={{ marginBottom: 2 }}>
               <Button
@@ -209,11 +202,11 @@ const Distribution = ({ userList }: IDistribution) => {
         </FormControl>
         <StyledTextarea
           id="outlined-basic"
+          ref={textAreaRef}
           placeholder="Введите сообщение"
-          minRows={2} // Можно настроить минимальное количество строк
-          maxRows={10} // Можно настроить максимальное количество строк
-          value={messageText}
-          onChange={(e) => handleSetMessage(e.target.value)}
+          minRows={2}
+          maxLength={4095}
+          maxRows={10}
           style={{ maxWidth: 320, width: '100%' }}
         />
 

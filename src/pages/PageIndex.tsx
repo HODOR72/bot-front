@@ -5,7 +5,6 @@ import useSettings from '../hooks/useSettings';
 // components
 import Page from '../components/Page';
 import { useEffect, useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';
 import { RootState, dispatch } from 'src/redux/store';
 import { getUserListThunk } from 'src/redux/thunks/user';
@@ -31,10 +30,6 @@ export default function PageIndex() {
   useEffect(() => {
     dispatch(getActionsListThunk(actionsListParams));
   }, [dispatch, actionsListParams]);
-
-  useEffect(() => {
-    console.log('update data', userList, actionsList);
-  }, [userList, actionsList]);
 
   return (
     <>

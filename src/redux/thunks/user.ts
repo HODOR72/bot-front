@@ -9,8 +9,14 @@ export function getUserListThunk(params: UserListParams) {
   return async () => {
     dispatch(startLoading());
     try {
-      const response: { data: User[] } = await axiosBase.get('getUsers', { params });
-      console.log(response.data);
+      let sendedRequests = 0
+      let response: { data: User[] } = await axiosBase.get('getUsers', { params });
+
+      while (response.data.length === 0 && sendedRequests < 3) {
+        response = await axiosBase.get('getUsers', { params });
+        sendedRequests++
+      }
+
       dispatch(getUserListSuccess(response.data));
     } catch (error) {
       dispatch(hasError(error));

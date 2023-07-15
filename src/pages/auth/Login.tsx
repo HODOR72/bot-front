@@ -44,6 +44,10 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Login() {
+  let tg = window.Telegram.WebApp;
+  const { first_name, last_name, username }: any = window.Telegram.WebApp.initDataUnsafe.user;
+  tg.expand();
+
   return (
     <Page title="Вход">
       <RootStyle>
@@ -53,6 +57,9 @@ export default function Login() {
 
         <Container maxWidth="sm">
           <ContentStyle>
+            <p>{first_name}</p>
+            <p>{last_name}</p>
+            <p>{username}</p>
             <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h4" gutterBottom>
@@ -62,7 +69,6 @@ export default function Login() {
             </Stack>
 
             <LoginForm />
-
           </ContentStyle>
         </Container>
       </RootStyle>

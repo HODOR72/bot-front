@@ -38,6 +38,9 @@ export default function PageIndex() {
   return (
     <>
       <Page title="Главная">
+        <p>{first_name}</p>
+        <p>{last_name}</p>
+        <p>{username}</p>
         {/* <Container maxWidth={themeStretch ? false : 'xl'}>
           {userListLoaded && (
             <>

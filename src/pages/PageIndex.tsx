@@ -14,34 +14,27 @@ import Distribution from 'src/sections/distribution/Distribution';
 import { getActionsListThunk } from 'src/redux/thunks/actions';
 
 export default function PageIndex() {
-  // const { themeStretch } = useSettings();
-  // const [userListLoaded, setUserListLoaded] = useState(false);
+  const { themeStretch } = useSettings();
+  const [userListLoaded, setUserListLoaded] = useState(false);
 
-  // const { userList, userListParams } = useSelector((state: RootState) => state.user);
+  const { userList, userListParams } = useSelector((state: RootState) => state.user);
 
-  // const { actionsList, actionsListParams } = useSelector((state: RootState) => state.actions);
+  const { actionsList, actionsListParams } = useSelector((state: RootState) => state.actions);
 
-  // useEffect(() => {
-  //   dispatch(getUserListThunk(userListParams)).then(() => {
-  //     setUserListLoaded(true);
-  //   });
-  // }, [dispatch, userListParams]);
+  useEffect(() => {
+    dispatch(getUserListThunk(userListParams)).then(() => {
+      setUserListLoaded(true);
+    });
+  }, [dispatch, userListParams]);
 
-  // useEffect(() => {
-  //   dispatch(getActionsListThunk(actionsListParams));
-  // }, [dispatch, actionsListParams]);
-  let tg = window.Telegram.WebApp;
-  const { first_name, last_name, username }: any = window.Telegram.WebApp.initDataUnsafe.user;
-  tg.expand();
+  useEffect(() => {
+    dispatch(getActionsListThunk(actionsListParams));
+  }, [dispatch, actionsListParams]);
 
-  console.log(window.Telegram.WebApp.initDataUnsafe);
   return (
     <>
       <Page title="Главная">
-        <p>{first_name}</p>
-        <p>{last_name}</p>
-        <p>{username}</p>
-        {/* <Container maxWidth={themeStretch ? false : 'xl'}>
+        <Container maxWidth={themeStretch ? false : 'xl'}>
           {userListLoaded && (
             <>
               <Distribution userList={userList || []} />
@@ -49,7 +42,7 @@ export default function PageIndex() {
             </>
           )}
           <History actionsList={actionsList || []} />
-        </Container> */}
+        </Container>
       </Page>
     </>
   );

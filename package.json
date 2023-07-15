@@ -80,6 +80,7 @@
     "simplebar-react": "^2.4.1",
     "stylis": "^4.1.1",
     "stylis-plugin-rtl": "^2.1.1",
+    "telegram-web-app": "^0.0.0",
     "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
@@ -95,6 +96,7 @@
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^18.0.5",
     "@types/react-lazy-load-image-component": "^1.5.2",
+    "@types/telegram-web-app": "^6.7.0",
     "@typescript-eslint/eslint-plugin": "^5.30.3",
     "@typescript-eslint/parser": "^5.30.3",
     "eslint": "^8.19.0",

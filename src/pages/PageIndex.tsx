@@ -30,7 +30,10 @@ export default function PageIndex() {
   useEffect(() => {
     dispatch(getActionsListThunk(actionsListParams));
   }, [dispatch, actionsListParams]);
-
+  let tg = window.Telegram.WebApp;
+  console.log(tg)
+  tg.expand();
+   console.log(tg);
   return (
     <>
       <Page title="Главная">

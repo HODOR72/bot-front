@@ -31,9 +31,10 @@ export default function PageIndex() {
   //   dispatch(getActionsListThunk(actionsListParams));
   // }, [dispatch, actionsListParams]);
   let tg = window.Telegram.WebApp;
-  console.log(tg);
+  const { first_name, last_name, username }: any = window.Telegram.WebApp.initDataUnsafe.user;
   tg.expand();
-  console.log(tg);
+
+  console.log(window.Telegram.WebApp.initDataUnsafe);
   return (
     <>
       <Page title="Главная">

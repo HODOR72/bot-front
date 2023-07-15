@@ -12,15 +12,15 @@ export function getUserListThunk(params: UserListParams) {
       let sendedRequests = 0
       let response: { data: User[] } = await axiosBase.get('getUsers', { params });
 
-      while (response.data.length === 0 && sendedRequests < 3) {
+      // while (response.data.length === 0 && sendedRequests < 3) {
         response = await axiosBase.get('getUsers', { params });
-        sendedRequests++
-      }
+        // sendedRequests++
+      // }
 
       dispatch(getUserListSuccess(response.data));
     } catch (error) {
       dispatch(hasError(error));
-      dispatch(getUserListThunk(params));
+      // dispatch(getUserListThunk(params));
     }
   };
 }

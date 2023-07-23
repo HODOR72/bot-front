@@ -18,8 +18,6 @@ import {
 import { useSnackbar } from 'notistack';
 import { User } from 'src/@types/user';
 import Iconify from 'src/components/Iconify';
-import { dispatch } from 'src/redux/store';
-import { createMessagesThunk } from 'src/redux/thunks/messages';
 
 type Option = User;
 
@@ -103,12 +101,12 @@ const Distribution = ({ userList }: IDistribution) => {
 
     setSelectedOption([]);
 
-    await dispatch(
-      createMessagesThunk({
-        users: filteredUserIds,
-        message: messageText,
-      })
-    );
+    // await dispatch(
+    //   createMessagesThunk({
+    //     users: filteredUserIds,
+    //     message: JSON.stringify(messageText),
+    //   })
+    // );
     messageText = '';
     return enqueueSnackbar('Сообщение успешно отправлено', { variant: 'success' });
   };
